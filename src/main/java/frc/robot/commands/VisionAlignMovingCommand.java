@@ -3,12 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class VisionAlignMovingCommand extends CommandBase {
+public class VisionAlignMovingCommand extends Command {
     // option 1 - just p
      private final double kP = 0.0085;//0.000625
      private final double kI = 0.0000;
@@ -63,8 +63,8 @@ public class VisionAlignMovingCommand extends CommandBase {
         double xAxis = -controller.getRawAxis(strafeAxis);
         double rAxis = pid.calculate(getError(), 0);
       
-        yAxis = (Math.abs(yAxis) < Constants.stickDeadband) ? 0 : yAxis;
-        xAxis = (Math.abs(xAxis) < Constants.stickDeadband) ? 0 : xAxis;
+        yAxis = (Math.abs(yAxis) < Constants.Controls.stickDeadband) ? 0 : yAxis;
+        xAxis = (Math.abs(xAxis) < Constants.Controls.stickDeadband) ? 0 : xAxis;
         translation = new Translation2d(yAxis, xAxis).times(Constants.Swerve.maxSpeed);
 
 

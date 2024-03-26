@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.SPI;
 
 import frc.robot.SwerveModule;
 //import frc.lib.math.conversions.Conversions;
-import frc.robot.Constants;
+import static frc.robot.Constants.*;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -30,21 +30,21 @@ public class SwerveSubsystem extends SubsystemBase {
         zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
-            new SwerveModule(0, Constants.Swerve.Mod0.constants),
-            new SwerveModule(1, Constants.Swerve.Mod1.constants),
-            new SwerveModule(2, Constants.Swerve.Mod2.constants),
-            new SwerveModule(3, Constants.Swerve.Mod3.constants)
+            new SwerveModule(0, Swerve.Mod0.constants),
+            new SwerveModule(1, Swerve.Mod1.constants),
+            new SwerveModule(2, Swerve.Mod2.constants),
+            new SwerveModule(3, Swerve.Mod3.constants)
         };
 
         swervePosAll = getPositions();
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swervePosAll);
+        swerveOdometry = new SwerveDriveOdometry(Swerve.swerveKinematics, getYaw(), swervePosAll);
 
         
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates =
-            Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+            Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                     translation.getX(), 
                                     translation.getY(), 
@@ -56,7 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                     translation.getY(), 
                                     rotation)
                                 );
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Swerve.maxSpeed);
 
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -65,7 +65,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
@@ -109,7 +109,11 @@ public class SwerveSubsystem extends SubsystemBase {
         ypr[0] = navX.getYaw();
         ypr[1] = navX.getPitch();
         ypr[2] = navX.getRoll();
-        return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - ypr[0]) : Rotation2d.fromDegrees(ypr[0]);
+        return (Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - ypr[0]) : Rotation2d.fromDegrees(ypr[0]);
+    }
+
+    public void stopAllSwerve(){
+        
     }
 
     @Override
@@ -117,14 +121,14 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveOdometry.update(getYaw(), getPositions());  
 
         for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Absolute Encoder", mod.angleEncoderGet() + mod.angleOffset);
+           // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Absolute Encoder", mod.angleEncoderGet() + mod.angleOffset);
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + "Adjusted Steering" , mod.angleEncoderGet());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated Encoder", mod.getState().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Error", mod.angleError.getDegrees());
            // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Velocity (m/s)", mod.getState().speedMetersPerSecond);  
         }
         SmartDashboard.putNumber("navX Yaw: " , navX.getYaw()); 
-        SmartDashboard.putNumber("navX Pitch: " , navX.getPitch());
-        SmartDashboard.putNumber("navX Roll: " , navX.getRoll());
+        //SmartDashboard.putNumber("navX Pitch: " , navX.getPitch());
+        //SmartDashboard.putNumber("navX Roll: " , navX.getRoll());
         
     }
 }

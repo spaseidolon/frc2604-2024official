@@ -24,12 +24,19 @@ public class SwerveModule {
     private boolean forceAbsolute;
     private double lastAngle;
     public PIDController anglePID;
+    public boolean isBackhand;
+    public Rotation2d angleError;
+    public Rotation2d outputAngle;
+    public Rotation2d processAngle;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
         this.forceAbsolute = moduleConstants.forceAbsolute;
+        this.isBackhand = false;
+        this.outputAngle = Rotation2d.fromDegrees(0);
+        this.angleError = Rotation2d.fromDegrees(0);
         
         angleOffset = moduleConstants.angleOffset;
         
@@ -50,9 +57,9 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
-
-        if(isOpenLoop){
+            if(isOpenLoop){
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            percentOutput = isBackhand ? -percentOutput : percentOutput;
             mDriveMotor.setCommand(CANVenom.ControlMode.VoltageControl, percentOutput * 12);
         }
         else {
@@ -62,9 +69,27 @@ public class SwerveModule {
         }
 
         double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle.getDegrees(); //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        if (forceAbsolute) {mAngleMotor.setCommand(ControlMode.VoltageControl, anglePID.calculate(angleEncoderGet(), angle));}
+        outputAngle = isBackhand ? desiredState.angle.plus(Rotation2d.fromDegrees(180)) : desiredState.angle;
+        angleError = desiredState.angle.plus(Rotation2d.fromDegrees(360));
+        processAngle = Rotation2d.fromDegrees(angleEncoderGet() + 360);
+        angleError = processAngle.minus(angleError);
+       /*  if (angleError.getDegrees() > 120 || angleError.getDegrees() < -120) { 
+            isBackhand = !isBackhand;
+            outputAngle = outputAngle.plus(Rotation2d.fromDegrees(180));
+        }*/
+        
+        if (angleError.getDegrees() > 270){
+           outputAngle = outputAngle.minus(Rotation2d.fromDegrees(360));
+           processAngle = processAngle.minus(Rotation2d.fromDegrees(360));
+        }
+        if (angleError.getDegrees() < -270){
+            outputAngle = outputAngle.plus(Rotation2d.fromDegrees(360));
+            processAngle = processAngle.plus(Rotation2d.fromDegrees(360));
+        }
+        processAngle = processAngle.minus(Rotation2d.fromDegrees(360));
+        if (forceAbsolute) {mAngleMotor.setCommand(ControlMode.VoltageControl, anglePID.calculate(processAngle.getDegrees(), outputAngle.getDegrees()));}
         else {mAngleMotor.setCommand(ControlMode.PositionControl, Conversions.PwFConversions.degreesTomotor(angle, Constants.Swerve.angleGearRatio)); }
-        lastAngle = angle;
+        lastAngle = outputAngle.getDegrees();
     }
 
     private void resetToAbsolute(){
@@ -86,6 +111,8 @@ public class SwerveModule {
       
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
         mAngleMotor.setPID(Constants.Swerve.angleKP, Constants.Swerve.angleKI, Constants.Swerve.angleKD, Constants.Swerve.angleKF, 0);
+        mAngleMotor.setMaxAcceleration(Constants.Swerve.angleMaxAcceleration);
+        mAngleMotor.setMaxJerk(Constants.Swerve.angleMaxJerk);
         if (forceAbsolute) anglePID = new PIDController(Constants.Swerve.angleKP / 100, Constants.Swerve.angleKI, Constants.Swerve.angleKD);
         resetToAbsolute();
     }
@@ -94,6 +121,8 @@ public class SwerveModule {
       //  mDriveMotor.configAllSettings(Robot.ctreConfigs.swerveDriveFXConfig);
         mDriveMotor.setInverted(Constants.Swerve.driveMotorInvert);
         mDriveMotor.setPID(Constants.Swerve.driveKP, Constants.Swerve.driveKI, Constants.Swerve.driveKD, Constants.Swerve.driveKF, 0);
+        mDriveMotor.setMaxAcceleration(Constants.Swerve.driveMaxAcceleration);
+        mDriveMotor.setMaxJerk(Constants.Swerve.driveMaxJerk);
     }
 /*
     public Rotation2d getCanCoder(){
