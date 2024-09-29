@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkBase;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -112,7 +113,7 @@ public static final class Controls{
         public static final double driveKA = (0.27 / 12);
 
         /* Swerve Profiling Values */
-        public static final double maxSpeed = 4.5; //meters per second
+        public static final double maxSpeed = 6.5; //meters per second
         public static final double maxAngularVelocity = 8;
 
         /* Neutral Modes */
@@ -184,9 +185,10 @@ public static final class Controls{
         public static final int shootBID = 14;
 
         public static final double shootpower = 0.9;
-        public static final double ampshotpower = 0.45;
+        public static final double ampshotpower = 0.38;
         public static final double intakepower = 0.5;
         public static final double intakeburppower = intakepower * 0.5;
+        public static final CANSparkBase.IdleMode climberSparkMode = CANSparkBase.IdleMode.kBrake;
     }
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 3;
@@ -194,8 +196,8 @@ public static final class Controls{
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
     
-        public static final double kPXController = 1;
-        public static final double kPYController = 1;
+        public static final double kPXController = 10;
+        public static final double kPYController = 10;
         public static final double kPThetaController = 2;
     
         // Constraint for the motion profilied robot angle controller

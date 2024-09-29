@@ -112,7 +112,7 @@ public static double degreesTomotor(double degrees, double gearRatio) {
 * @return RPM of Mechanism
 */
 public static double motorToRPM(double velocityCounts, double gearRatio) {
-   double motorRPM = velocityCounts * (600.0);        
+   double motorRPM = velocityCounts;        
    double mechRPM = motorRPM / gearRatio;
    return mechRPM;
 }
@@ -124,7 +124,7 @@ public static double motorToRPM(double velocityCounts, double gearRatio) {
 */
 public static double RPMTomotor(double RPM, double gearRatio) {
    double motorRPM = RPM * gearRatio;
-   double sensorCounts = (motorRPM / 600.0);
+   double sensorCounts = (motorRPM);
    return sensorCounts;
 }
 

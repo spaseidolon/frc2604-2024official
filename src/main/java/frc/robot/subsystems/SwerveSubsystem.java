@@ -122,9 +122,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
         for(SwerveModule mod : mSwerveMods){
            // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Absolute Encoder", mod.angleEncoderGet() + mod.angleOffset);
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + "Adjusted Steering" , mod.angleEncoderGet());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Error", mod.angleError.getDegrees());
-           // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Velocity (m/s)", mod.getState().speedMetersPerSecond);  
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Adjusted Steering" , mod.angleEncoderGet());
+            
+           // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Error", mod.angleError.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Reported Speed", mod.getState().speedMetersPerSecond);  
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Reported Position", mod.getPosition().distanceMeters);
+            Rotation2d modAngle = mod.getPosition().angle;
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Reported Angle", modAngle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Commanded Speed", mod.commandedState.speedMetersPerSecond); 
+            //SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Commanded Angle", mod.getState().speedMetersPerSecond); 
         }
         SmartDashboard.putNumber("navX Yaw: " , navX.getYaw()); 
         //SmartDashboard.putNumber("navX Pitch: " , navX.getPitch());

@@ -34,6 +34,8 @@ public class OperatorSubsystem extends SubsystemBase {
     public void configOperatorParams(){
         climberA.setSecondaryCurrentLimit(25);
         climberB.setSecondaryCurrentLimit(25);
+        climberA.setIdleMode(AuxSystems.climberSparkMode);
+        climberB.setIdleMode(AuxSystems.climberSparkMode);
         shooterA.setInverted(true);
         shooterB.setInverted(true);
     }

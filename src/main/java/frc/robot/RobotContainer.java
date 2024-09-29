@@ -7,13 +7,13 @@ package frc.robot;
 //import edu.wpi.first.wpilibj.Joystick;
 //import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 //import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants.*;
-//import frc.robot.autos.*;
+import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -38,13 +38,13 @@ public class RobotContainer {
     o_Operator.setDefaultCommand(new TeleopOperator(o_Operator));
 
 
-    /*autoChooser.addOption("S Then Backwards", new exampleAuto(s_Swerve));
-    autoChooser.addOption("DriveForwardOnly", new DriveForawrdAuto(s_Swerve));
+    /*autoChooser.addOption("S Then Backwards", new exampleAuto(s_Swerve));*/
+    autoChooser.addOption("DriveForwardOnly", new DriveForawrdAuto(s_Swerve));/*
     autoChooser.addOption("TwoBallRightForward", new TwoBallRightForwardAuto(s_Swerve));
     autoChooser.addOption("ThreeBallRight", new ThreeBallRightAuto(s_Swerve));
     autoChooser.addOption("BackupAndShoot", new BackupAndShootAuto(s_Swerve));
-    autoChooser.addOption("TwoBallLeft", new TwoBallLeftAuto(s_Swerve));
-    SmartDashboard.putData("Auto Selector", autoChooser);*/
+    autoChooser.addOption("TwoBallLeft", new TwoBallLeftAuto(s_Swerve));*/
+    SmartDashboard.putData("Auto Selector", autoChooser);
     
     
     // Configure the button bindings

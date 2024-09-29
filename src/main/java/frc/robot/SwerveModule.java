@@ -28,6 +28,7 @@ public class SwerveModule {
     public Rotation2d angleError;
     public Rotation2d outputAngle;
     public Rotation2d processAngle;
+    public SwerveModuleState commandedState;
 
     SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
@@ -37,6 +38,7 @@ public class SwerveModule {
         this.isBackhand = false;
         this.outputAngle = Rotation2d.fromDegrees(0);
         this.angleError = Rotation2d.fromDegrees(0);
+        this.commandedState = new SwerveModuleState();
         
         angleOffset = moduleConstants.angleOffset;
         
@@ -57,6 +59,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
+        commandedState = desiredState;
             if(isOpenLoop){
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             percentOutput = isBackhand ? -percentOutput : percentOutput;
@@ -131,7 +134,8 @@ public class SwerveModule {
 */
 
     public SwerveModuleState getState(){
-        double velocity = Conversions.PwFConversions.motorToMPS(mDriveMotor.getSpeed(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
+        double velocity = 0;
+        velocity = Conversions.PwFConversions.motorToMPS(mDriveMotor.getSpeed(), Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
         Rotation2d angle;
         if (this.forceAbsolute) {angle = Rotation2d.fromDegrees(angleEncoderGet());}
         else {angle = Rotation2d.fromDegrees(Conversions.PwFConversions.motorToDegrees(mAngleMotor.getPosition(), Constants.Swerve.angleGearRatio));}        return new SwerveModuleState(velocity, angle);
